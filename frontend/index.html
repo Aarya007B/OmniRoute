@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniRoute — Dynamic Edge-to-Cloud Router</title>
+    <meta name="description"
+        content="Intelligent middleware that dynamically routes AI requests between Cloud and Edge based on real-time telemetry.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <!-- ── Animated background ── -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+
+    <!-- ── Header ── -->
+    <header class="header">
+        <div class="header__brand">
+            <div class="header__logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="url(#logo-grad)" stroke-width="2.5" />
+                    <path d="M10 16 L16 10 L22 16 L16 22Z" fill="url(#logo-grad)" opacity="0.8" />
+                    <circle cx="16" cy="16" r="3" fill="#fff" />
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#6366f1" />
+                            <stop offset="100%" stop-color="#06b6d4" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div>
+                <h1 class="header__title">OmniRoute</h1>
+                <p class="header__subtitle">Dynamic Edge-to-Cloud Router</p>
+            </div>
+        </div>
+        <div class="header__controls">
+            <!-- Force Route Override (#1) -->
+            <div class="route-override" id="routeOverride">
+                <label class="route-override__label">Route:</label>
+                <div class="route-override__toggle">
+                    <button class="route-toggle route-toggle--active" data-route="auto" id="toggleAuto">AUTO</button>
+                    <button class="route-toggle" data-route="cloud" id="toggleCloud">☁️ CLOUD</button>
+                    <button class="route-toggle" data-route="edge" id="toggleEdge">🖥️ EDGE</button>
+                </div>
+            </div>
+            <div class="header__status" id="connectionStatus">
+                <span class="status-dot status-dot--connecting"></span>
+                <span>Connecting…</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Main Layout ── -->
+    <main class="main">
+        <!-- ── Left Column: Telemetry + Stats + Logs ── -->
+        <aside class="sidebar">
+            <!-- Route Indicator -->
+            <div class="card route-card" id="routeCard">
+                <div class="route-indicator" id="routeIndicator">
+                    <div class="route-indicator__icon" id="routeIcon">☁️</div>
+                    <div class="route-indicator__label" id="routeLabel">CLOUD</div>
+                </div>
+                <p class="route-indicator__reason" id="routeReason">Evaluating system state…</p>
+            </div>
+
+            <!-- Telemetry Cards with Sparklines (#5) -->
+            <div class="telemetry-grid">
+                <div class="card telemetry-card" id="pingCard">
+                    <div class="telemetry-card__header">
+                        <span class="telemetry-card__icon">📡</span>
+                        <span class="telemetry-card__title">Network Ping</span>
+                    </div>
+                    <div class="telemetry-card__body">
+                        <div>
+                            <div class="telemetry-card__value" id="pingValue">—</div>
+                            <div class="telemetry-card__unit">ms</div>
+                        </div>
+                        <canvas class="sparkline" id="pingSpark" width="80" height="32"></canvas>
+                    </div>
+                    <div class="telemetry-card__bar">
+                        <div class="telemetry-card__bar-fill" id="pingBar"></div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-card" id="batteryCard">
+                    <div class="telemetry-card__header">
+                        <span class="telemetry-card__icon">🔋</span>
+                        <span class="telemetry-card__title">Battery</span>
+                    </div>
+                    <div class="telemetry-card__body">
+                        <div>
+                            <div class="telemetry-card__value" id="batteryValue">—</div>
+                            <div class="telemetry-card__unit" id="batteryUnit">%</div>
+                        </div>
+                        <canvas class="sparkline" id="batterySpark" width="80" height="32"></canvas>
+                    </div>
+                    <div class="telemetry-card__bar">
+                        <div class="telemetry-card__bar-fill" id="batteryBar"></div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-card" id="ramCard">
+                    <div class="telemetry-card__header">
+                        <span class="telemetry-card__icon">💾</span>
+                        <span class="telemetry-card__title">Available RAM</span>
+                    </div>
+                    <div class="telemetry-card__body">
+                        <div>
+                            <div class="telemetry-card__value" id="ramValue">—</div>
+                            <div class="telemetry-card__unit">GB</div>
+                        </div>
+                        <canvas class="sparkline" id="ramSpark" width="80" height="32"></canvas>
+                    </div>
+                    <div class="telemetry-card__bar">
+                        <div class="telemetry-card__bar-fill" id="ramBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Estimation Widget (#4) -->
+            <div class="card cost-card">
+                <div class="card__header">
+                    <h3>💰 Cost Savings</h3>
+                </div>
+                <div class="cost-grid">
+                    <div class="cost-stat">
+                        <span class="cost-stat__value" id="costSaved">$0.00</span>
+                        <span class="cost-stat__label">Saved</span>
+                    </div>
+                    <div class="cost-stat">
+                        <span class="cost-stat__value" id="edgePercent">0%</span>
+                        <span class="cost-stat__label">Edge Offload</span>
+                    </div>
+                    <div class="cost-stat">
+                        <span class="cost-stat__value" id="totalRequests">0</span>
+                        <span class="cost-stat__label">Requests</span>
+                    </div>
+                </div>
+                <div class="cost-projection">
+                    <span class="cost-projection__label">Projected daily savings (10K reqs):</span>
+                    <span class="cost-projection__value" id="projectedSavings">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Latency Comparison Chart (#2) -->
+            <div class="card chart-card">
+                <div class="card__header">
+                    <h3>⚡ Latency Comparison</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="latencyChart" width="320" height="140"></canvas>
+                    <div class="chart-legend">
+                        <span class="chart-legend__item chart-legend--cloud">☁️ Cloud</span>
+                        <span class="chart-legend__item chart-legend--edge">🖥️ Edge</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="card log-card">
+                <div class="card__header">
+                    <h3>Activity Log</h3>
+                    <button class="btn btn--ghost btn--sm" id="clearLogsBtn">Clear</button>
+                </div>
+                <div class="log-list" id="logList">
+                    <div class="log-empty">No requests yet. Send a prompt or image to get started.</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── Right Column: Inference Panels ── -->
+        <section class="content">
+            <!-- Tab Switcher -->
+            <div class="tab-bar">
+                <button class="tab tab--active" data-tab="text" id="tabText">
+                    <span class="tab__icon">💬</span> Text Generation
+                </button>
+                <button class="tab" data-tab="vision" id="tabVision">
+                    <span class="tab__icon">👁️</span> Object Detection
+                </button>
+            </div>
+
+            <!-- Text Panel -->
+            <div class="panel panel--active" id="panelText">
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-welcome">
+                        <div class="chat-welcome__icon">🧠</div>
+                        <h2>Text Generation</h2>
+                        <p>Send a prompt and OmniRoute will automatically route it to the optimal inference backend.
+                            Responses stream in real-time via SSE.</p>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <textarea class="chat-input" id="chatInput" placeholder="Type your prompt here…"
+                        rows="1"></textarea>
+                    <button class="btn btn--primary" id="sendTextBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vision Panel -->
+            <div class="panel" id="panelVision">
+                <div class="vision-container">
+                    <div class="vision-upload" id="visionUpload">
+                        <div class="vision-upload__dropzone" id="dropzone">
+                            <div class="vision-upload__icon">📷</div>
+                            <h3>Drop an image here</h3>
+                            <p>or click to browse • supports JPG, PNG, WebP</p>
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                        </div>
+                        <div class="vision-upload__actions">
+                            <button class="btn btn--outline" id="browseBtn">Browse Files</button>
+                            <button class="btn btn--outline" id="cameraBtn">📸 Use Camera</button>
+                        </div>
+                    </div>
+
+                    <!-- Preview + Results -->
+                    <div class="vision-results" id="visionResults" style="display:none;">
+                        <div class="vision-preview">
+                            <canvas id="detectionCanvas" style="display:none;"></canvas>
+                            <img id="previewImage" alt="Uploaded image">
+                        </div>
+                        <div class="vision-detections">
+                            <div class="card__header">
+                                <h3>Detections</h3>
+                                <span class="badge" id="detectionCount">0 objects</span>
+                            </div>
+                            <div class="detection-list" id="detectionList"></div>
+                            <button class="btn btn--outline btn--full" id="newImageBtn">Upload New Image</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden video for camera capture -->
+                <video id="cameraVideo" autoplay playsinline style="display:none;"></video>
+            </div>
+        </section>
+    </main>
+
+    <!-- ── Toast container ── -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ── Loading overlay ── -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" id="loadingText">Processing…</p>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
