@@ -6,28 +6,42 @@
 
 /* ── Design Tokens ──────────────────────────────────────────────────────── */
 :root {
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #111118;
-    --bg-card: rgba(17, 17, 24, 0.7);
-    --bg-card-hover: rgba(25, 25, 35, 0.8);
-    --border-subtle: rgba(255, 255, 255, 0.06);
-    --border-medium: rgba(255, 255, 255, 0.1);
+    --bg-primary: #0C0C0D;
+    --bg-secondary: #141416;
+    --bg-card: #141416;
+    --bg-card-hover: #1E1E22;
+    --border-subtle: #27272A;
+    --border-medium: #27272A;
 
-    --text-primary: #f0f0f5;
-    --text-secondary: #8b8b9e;
-    --text-muted: #555566;
+    --text-primary: #EDEDED;
+    --text-secondary: #8A8A93;
+    --text-muted: #8A8A93;
 
-    --accent-cloud: #6366f1;
-    --accent-cloud-glow: rgba(99, 102, 241, 0.3);
-    --accent-edge: #f59e0b;
-    --accent-edge-glow: rgba(245, 158, 11, 0.3);
-    --accent-cyan: #06b6d4;
-    --accent-green: #10b981;
-    --accent-red: #ef4444;
+    --accent-cloud: #7BA3D3;
+    --accent-edge: #C47E5A;
+    --accent-sage: #5B8A68;
+    --accent-gold: #C9A05C;
+    --accent-brick: #A65252;
 
-    --gradient-cloud: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
-    --gradient-edge: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-    --gradient-bg: linear-gradient(135deg, #0a0a1a 0%, #0d0d1f 50%, #0a0a15 100%);
+    --font-sans: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', 'SF Mono', monospace;
+
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
@@ -85,23 +99,15 @@ body {
     position: fixed;
     inset: 0;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none;
     z-index: 0;
 }
 
 .bg-glow {
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: 0;
-    animation: glowFloat 15s ease-in-out infinite;
+    display: none;
 }
 
 .bg-glow--1 {
@@ -142,8 +148,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: var(--spacing-sm) var(--spacing-xl);
-    background: rgba(10, 10, 15, 0.8);
-    backdrop-filter: blur(20px) saturate(1.2);
+    background: var(--bg-primary);
     border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -156,7 +161,6 @@ body {
 .header__logo {
     display: flex;
     align-items: center;
-    animation: logoSpin 20s linear infinite;
 }
 
 @keyframes logoSpin {
@@ -170,20 +174,21 @@ body {
 }
 
 .header__title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    background: var(--gradient-cloud);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.02em;
+    font-size: 1.18rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
 }
 
 .header__subtitle {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
+    font-family: var(--font-sans);
     font-weight: 400;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
 }
 
 .header__controls {
@@ -199,10 +204,9 @@ body {
     font-size: 0.8rem;
     color: var(--text-secondary);
     padding: var(--spacing-xs) var(--spacing-md);
-    background: var(--bg-card);
+    background: var(--bg-primary);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-full);
-    backdrop-filter: blur(10px);
 }
 
 .status-dot {
@@ -213,19 +217,17 @@ body {
 }
 
 .status-dot--online {
-    background: var(--accent-green);
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    background: var(--accent-sage);
     animation: pulse 2s ease-in-out infinite;
 }
 
 .status-dot--offline {
-    background: var(--accent-red);
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+    background: var(--accent-brick);
     animation: pulse 1s ease-in-out infinite;
 }
 
 .status-dot--connecting {
-    background: var(--accent-edge);
+    background: var(--accent-gold);
     animation: pulse 0.8s ease-in-out infinite;
 }
 
@@ -260,11 +262,12 @@ body {
 
 .route-override__toggle {
     display: flex;
-    background: var(--bg-card);
+    background: var(--bg-primary);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     padding: 2px;
     gap: 2px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.12);
 }
 
 .route-toggle {
@@ -287,23 +290,24 @@ body {
 }
 
 .route-toggle--active {
-    color: var(--text-primary);
-    background: rgba(99, 102, 241, 0.2);
-    box-shadow: 0 0 8px rgba(99, 102, 241, 0.15);
+    color: var(--accent-cloud);
+    background: #1C2331;
+    box-shadow: none;
 }
 
 .route-toggle--active[data-route="edge"] {
-    background: rgba(245, 158, 11, 0.2);
-    box-shadow: 0 0 8px rgba(245, 158, 11, 0.15);
+    background: #2B1D18;
+    color: var(--accent-edge);
+    box-shadow: none;
 }
 
 /* ── Main Layout ────────────────────────────────────────────────────────── */
 .main {
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg) var(--spacing-xl);
-    max-width: 1600px;
+    grid-template-columns: 370px 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl) var(--spacing-2xl) var(--spacing-xl) var(--spacing-xl);
+    max-width: 1500px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
@@ -313,9 +317,10 @@ body {
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
     overflow-y: auto;
     max-height: calc(100vh - 90px);
+    padding-right: var(--spacing-md);
     scrollbar-width: thin;
     scrollbar-color: var(--border-medium) transparent;
 }
@@ -326,8 +331,8 @@ body {
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    backdrop-filter: blur(16px);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    box-shadow: none;
+    transition: border-color var(--transition-base);
 }
 
 .card:hover {
@@ -342,28 +347,33 @@ body {
 }
 
 .card__header h3 {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
     color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.07em;
+    line-height: 1.2;
 }
 
 /* ── Route Indicator ────────────────────────────────────────────────────── */
 .route-card {
     text-align: center;
     padding: var(--spacing-lg) var(--spacing-xl);
-    transition: box-shadow var(--transition-slow), border-color var(--transition-slow);
+    border-left: 2px solid transparent;
+    transition: border-color var(--transition-slow);
 }
 
 .route-card.route--cloud {
-    border-color: rgba(99, 102, 241, 0.3);
-    box-shadow: var(--shadow-glow-cloud);
+    border-left: 2px solid var(--accent-cloud);
+    border-color: var(--border-subtle);
+    box-shadow: none;
 }
 
 .route-card.route--edge {
-    border-color: rgba(245, 158, 11, 0.3);
-    box-shadow: var(--shadow-glow-edge);
+    border-left: 2px solid var(--accent-edge);
+    border-color: var(--border-subtle);
+    box-shadow: none;
 }
 
 .route-indicator {
@@ -375,7 +385,8 @@ body {
 
 .route-indicator__icon {
     font-size: 2rem;
-    animation: float 3s ease-in-out infinite;
+    /* Replace emoji with SVG icon in HTML */
+    animation: none;
 }
 
 @keyframes float {
@@ -392,18 +403,20 @@ body {
 
 .route-indicator__label {
     font-size: 1.3rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.1em;
-    background: var(--gradient-cloud);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--accent-cloud);
+    background: none;
+    -webkit-background-clip: initial;
+    -webkit-text-fill-color: initial;
+    background-clip: initial;
 }
 
 .route--edge .route-indicator__label {
-    background: var(--gradient-edge);
-    -webkit-background-clip: text;
-    background-clip: text;
+    color: var(--accent-edge);
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
 }
 
 .route-indicator__reason {
@@ -435,11 +448,13 @@ body {
 }
 
 .telemetry-card__title {
-    font-size: 0.7rem;
-    font-weight: 500;
+    font-size: 0.68rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
 }
 
 .telemetry-card__body {
@@ -450,19 +465,22 @@ body {
 }
 
 .telemetry-card__value {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1.68rem;
     font-family: var(--font-mono);
+    font-weight: 700;
     color: var(--text-primary);
-    line-height: 1;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
     transition: color var(--transition-base);
 }
 
 .telemetry-card__unit {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
+    font-family: var(--font-sans);
     font-weight: 500;
     margin-top: 1px;
+    letter-spacing: 0.04em;
 }
 
 .sparkline {
@@ -481,33 +499,33 @@ body {
 .telemetry-card__bar-fill {
     height: 100%;
     border-radius: var(--radius-full);
-    background: var(--gradient-cloud);
+    background: var(--accent-cloud);
     transition: width var(--transition-slow), background var(--transition-slow);
     width: 0%;
 }
 
 .telemetry-card__bar-fill.status--good {
-    background: var(--accent-green);
+    background: var(--accent-sage);
 }
 
 .telemetry-card__bar-fill.status--warn {
-    background: var(--accent-edge);
+    background: var(--accent-gold);
 }
 
 .telemetry-card__bar-fill.status--bad {
-    background: var(--accent-red);
+    background: var(--accent-brick);
 }
 
 .telemetry-card__value.status--good {
-    color: var(--accent-green);
+    color: var(--accent-sage);
 }
 
 .telemetry-card__value.status--warn {
-    color: var(--accent-edge);
+    color: var(--accent-gold);
 }
 
 .telemetry-card__value.status--bad {
-    color: var(--accent-red);
+    color: var(--accent-brick);
 }
 
 /* ── Cost Estimation Widget (#4) ────────────────────────────────────────── */
@@ -525,17 +543,19 @@ body {
 .cost-stat__value {
     display: block;
     font-family: var(--font-mono);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--accent-green);
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
 }
 
 .cost-stat__label {
     display: block;
-    font-size: 0.65rem;
+    font-size: 0.66rem;
+    font-family: var(--font-sans);
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.09em;
     margin-top: 2px;
 }
 
@@ -556,8 +576,9 @@ body {
 .cost-projection__value {
     font-family: var(--font-mono);
     font-weight: 700;
-    color: var(--accent-green);
-    font-size: 0.85rem;
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
 }
 
 /* ── Latency Comparison Chart (#2) ──────────────────────────────────────── */
@@ -582,11 +603,13 @@ body {
 }
 
 .chart-legend__item {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+    font-family: var(--font-sans);
     color: var(--text-muted);
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
+    letter-spacing: 0.07em;
 }
 
 .chart-legend--cloud::before {
@@ -1230,13 +1253,12 @@ body {
 .toast {
     pointer-events: auto;
     padding: var(--spacing-sm) var(--spacing-lg);
-    background: rgba(17, 17, 24, 0.95);
+    background: var(--bg-card);
     border: 1px solid var(--border-medium);
     border-radius: var(--radius-md);
-    backdrop-filter: blur(16px);
     font-size: 0.8rem;
     color: var(--text-primary);
-    box-shadow: var(--shadow-lg);
+    box-shadow: none;
     animation: toastIn 0.3s ease-out;
     display: flex;
     align-items: center;
@@ -1245,15 +1267,15 @@ body {
 }
 
 .toast--cloud {
-    border-left: 3px solid var(--accent-cloud);
+    border-left: none;
 }
 
 .toast--edge {
-    border-left: 3px solid var(--accent-edge);
+    border-left: none;
 }
 
 .toast--success {
-    border-left: 3px solid var(--accent-green);
+    border-left: none;
 }
 
 .toast-out {
@@ -1287,24 +1309,18 @@ body {
 /* ── Loading Overlay ────────────────────────────────────────────────────── */
 .loading-overlay {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 1px;
     z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-lg);
-    background: rgba(10, 10, 15, 0.7);
-    backdrop-filter: blur(8px);
+    background: none;
+    pointer-events: none;
+    display: block;
 }
 
 .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid var(--border-medium);
-    border-top-color: var(--accent-cloud);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    display: none;
 }
 
 @keyframes spin {
@@ -1314,9 +1330,31 @@ body {
 }
 
 .loading-text {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 500;
+    display: none;
+}
+/* Toast indicator dot */
+.toast__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    display: inline-block;
+}
+.toast--cloud .toast__dot { background: var(--accent-cloud); }
+.toast--edge .toast__dot { background: var(--accent-edge); }
+.toast--success .toast__dot { background: var(--accent-sage); }
+.toast--error .toast__dot { background: var(--accent-brick); }
+
+/* Loading progress bar */
+.loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 1px;
+    background: var(--accent-cloud);
+    z-index: 1001;
+    transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
 /* ── Scrollbar ──────────────────────────────────────────────────────────── */
