@@ -76,6 +76,7 @@
     let welcomeVisible = true;
     let pollTimer = null;
     let currentForceRoute = "auto";
+    let suppressRouteToast = false;  // Prevent double toast on manual override
 
     // Sparkline history buffers (#5) — last 20 readings
     const pingHistory = [];
@@ -87,9 +88,15 @@
     function showToast(message, type = "success", duration = 3000) {
         const toast = document.createElement("div");
         toast.className = `toast toast--${type}`;
-        toast.innerHTML = message;
+        // Add indicator dot
+        const dot = document.createElement("span");
+        dot.className = "toast__dot";
+        toast.appendChild(dot);
+        // Add message
+        const msg = document.createElement("span");
+        msg.innerHTML = message;
+        toast.appendChild(msg);
         dom.toastContainer.appendChild(toast);
-
         setTimeout(() => {
             toast.classList.add("toast-out");
             setTimeout(() => toast.remove(), 300);
@@ -110,8 +117,11 @@
             $$(".route-toggle").forEach((btn) => btn.classList.remove("route-toggle--active"));
             $(`[data-route="${route}"]`).classList.add("route-toggle--active");
 
-            const labels = { auto: "AUTO", cloud: "☁️ CLOUD", edge: "🖥️ EDGE" };
+            const labels = { auto: "AUTO", cloud: "CLOUD", edge: "EDGE" };
             showToast(`Route override: <strong>${labels[route]}</strong>`, route === "auto" ? "success" : route);
+
+            // Suppress the duplicate toast that updateRouteIndicator would fire
+            suppressRouteToast = true;
 
             // Immediately re-poll telemetry
             pollTelemetry();
@@ -228,7 +238,9 @@
         currentRoute = target;
 
         dom.routeCard.className = `card route-card route--${target}`;
-        dom.routeIcon.textContent = isCloud ? "☁️" : "🖥️";
+        dom.routeIcon.innerHTML = isCloud
+            ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7BA3D3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1.5A4.5 4.5 0 0 0 6.5 19h11z"/></svg>'
+            : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C47E5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>';
         dom.routeLabel.textContent = isCloud ? "CLOUD" : "EDGE";
         dom.routeReason.textContent = reasoning;
 
@@ -236,10 +248,14 @@
             dom.routeCard.style.animation = "none";
             dom.routeCard.offsetHeight;
             dom.routeCard.style.animation = "routeChange 0.6s ease-out";
-            showToast(
-                `Route switched: <strong>${isCloud ? "☁️ CLOUD" : "🖥️ EDGE"}</strong>`,
-                isCloud ? "cloud" : "edge"
-            );
+            if (suppressRouteToast) {
+                suppressRouteToast = false;
+            } else {
+                showToast(
+                    `Route switched: <strong>${isCloud ? "CLOUD" : "EDGE"}</strong>`,
+                    isCloud ? "cloud" : "edge"
+                );
+            }
         }
     }
 
@@ -685,7 +701,9 @@
 
         entry.innerHTML = `
             <span class="log-entry__badge badge--${data.route}">
-                ${isCloud ? "☁️" : "🖥️"}
+                ${isCloud
+                ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7BA3D3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1.5A4.5 4.5 0 0 0 6.5 19h11z"/></svg>'
+                : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C47E5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>'}
             </span>
             <div class="log-entry__content">
                 <div class="log-entry__preview">${escapeHtml(preview)}</div>
@@ -718,11 +736,18 @@
 
     // ── Loading ─────────────────────────────────────────────────────────────
     function showLoading(text = "Processing…") {
-        dom.loadingText.textContent = text;
-        dom.loadingOverlay.style.display = "flex";
+        // Show loading bar (indeterminate)
+        const bar = dom.loadingBar || document.getElementById("loadingBar");
+        bar.style.width = "0%";
+        bar.style.display = "block";
+        setTimeout(() => { bar.style.width = "80%"; }, 50);
     }
 
-    function hideLoading() { dom.loadingOverlay.style.display = "none"; }
+    function hideLoading() {
+        const bar = dom.loadingBar || document.getElementById("loadingBar");
+        bar.style.width = "100%";
+        setTimeout(() => { bar.style.display = "none"; bar.style.width = "0%"; }, 350);
+    }
 
     // ── Helpers ─────────────────────────────────────────────────────────────
     function escapeHtml(str) {
